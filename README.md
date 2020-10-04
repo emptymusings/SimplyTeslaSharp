@@ -14,8 +14,10 @@ This library is tested using a Crestron MC-3 and a Tesla Model 3.  Tesla's API s
 ## Usage
 *NOTE: I have only used SIMPL Windows for this, and cannot verify if, or offer instructions for how, it will work in any other application*
 
-1) Download the SIMPL+ and SIMPL modules in the [UsrsPlus.zip file](https://github.com/lamentary/SimplyTeslaSharp/raw/main/UsrsPlus.zip) 
+1) Download the SIMPL+ and SIMPL modules in the [UsrsPlus.zip file](https://github.com/lamentary/SimplyTeslaSharp/raw/main/assets/UsrsPlus.zip) 
 
 2) Extract the UsrsPlus.zip file's contents to SIMPL Windows' location for User SIMPL+ modules.  To find this location, open SIMPL Windows, click on **Options -> Preferences** in the menu to open the Preferences Dialog, then select the **Directories** tab.
 
-3) Close and reopen SIMPL Windows.  You should now be able to find the *Tesla Master Processor* and *Tesla Car Processor* modules under in the **Symbol Library** under **User Modules -> Vehicles**
+3) Close and reopen SIMPL Windows.  You should now be able to find the **Tesla Master Processor** and **Tesla Car Processor** modules under in the **Symbol Library** under **User Modules -> Vehicles**
+
+You can take a look at the quick sample project [here](https://github.com/lamentary/SimplyTeslaSharp/raw/main/assets/SampleSimplProject.zip)
