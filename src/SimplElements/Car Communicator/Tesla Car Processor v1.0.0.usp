@@ -1,0 +1,812 @@
+/*
+Programmer: lamentary
+Comments: Communicates with Tesla's servers to get detailed information and send commands/settings to a vehicle
+Compatibility: Models S/3/X/Y
+DEPENDENCIES:
+This module requires the Tesla Master Processor
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+  (Uncomment and declare compiler directives as needed)
+*******************************************************************************************/// 
+#SYMBOL_NAME "Tesla Car Processor v1.0.0"
+#HINT "Communicates with a Tesla Vehicle-Requires API Tokens (should be used with Tesla Master Processor)"
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+#HELP_BEGIN
+NOTE: Most of the commands contained within this module will require waking a car if it is in sleep mode.  
+Doing so will have have some effect on battery/range.  Unless otherwise noted, assume that commands and 
+requests wake the car.
+                      
+INPUTS:
+Digital:
+GetCarSummary (does not wake car): Requests summary information from the associated vehicle
+GetCarDetails: Requests detailed information regarding the the associated vehicle
+ClimateTurnHvacOn: Starts climate control for preconditioning the associated vehicle
+ClimateTurnHvacOff: Stops climate control from precondintioning the associated vehicle
+BatteryChargingStart: Sends a command to the associated vehicle to start charging the drive battery 
+					  (if the preset charge limit has not been reached)
+BatteryChargingStop: Sends a command to the associated vehicle to stop charging the drive battery
+DoorLock: Locks the associated vehicle's doors
+DoorUnlock: Unlocks the associated vehicle's doors
+CarWake: Sends a wake request to the associated vehicle.  This will bring the car out of power saving
+		 state, allowing commands and requests to be sent and responded to.  Battery charge and range
+		 WILL be affected.
+
+Analog:
+SetChargeLevel: Sets the charge level limit to the value indicated
+SetDriverTemp: Sets the driver side climate control temperature to the value indicated (NOTE: when 
+			   climate values are linked, this will affect the climate values for the whole car)
+SetPassengerTemp: Sets the passenger side climate control temperature to the value indeicated (NOTE:
+			   when climate values are linked, this will affect the climate values for the whole car)
+
+String:
+***** The following values should be assigned by the Tesla Master Processor *****
+
+TokenVal: Sets the authorization token (assigned by Tesla's servers) for all communications 
+RefreshTokenVal: Sets the authorization token to use when requesting a new TokenVal
+TokenCreationDate: Sets the string representation of the date/time that the authorization token
+				   was created
+TokenExpirationDate: Sets the string representation of the date/time that the authoriztion token
+				   will expire
+CarID: The ID of the vehicle, as assigned by Tesla, that will be used to specify which vehicle
+	   is associated with this module and its commands/requests
+
+*********************************************************************************
+
+OUTPUT:
+Analog (Boolean values represented by 1/0):
+SummaryInService: Boolean representation of whether the car is in use 
+BatteryLevel: The vehicle's current battery charge state (percent)  
+BatteryChargeAmpsUserDefined: The user's set amp limit for charging (set via touchscreen in the car)
+BatteryChargeAmpsMax: The vehicle's maximum allowed amps for charging
+BatteryChargeEnableRequest: Unclear/undocumented.  Assumptions are that this allows the user to 
+							send a request to start/stop charging, and all indications are that 
+							this is always set to "true" (1); though I could envision it being
+							set to "false" (0) if the car is being serviced
+BatteryChargePortDoorOpen: Boolean representation of whether the charge port's door is open
+BatteryChargeToMaxRange: Boolean representation of whether the user has set the charge limit to maximum
+BatteryChargerPhases: Unclear/undocumented. This is a nullable integer value from what I've seen
+BatteryChargerPilotCurrentAmps: Amperage available to the charger
+BatteryChargerPowerKwh: The current kWh pull the charger is using
+BatteryChargerVoltage: The voltage pull the charger is using
+BatteryScheduledChargePending: Boolean representation of whether the user has scheduled a charge start time
+BatteryIsChargingForTrip: Despite its name, I have not found this to every change; even when charging is
+						  set to 100%
+BatteryUsableChargeLevel: The amount of battery available to be used, despite the current charge level statement
+BatteryHeater: Unclear/undocumented.  I believe it *may* be an indication of whether a battery heater is present
+BatteryHeaterNoPower: Unclear/undocumented.  I believe it may be whether the car is plugged in and therefore
+					  has power available for a battery heater
+ClimateFanLevel: Value indicating at which speed the HVAC fan is running
+ClimateIsAutoConditioningOn: Boolean representation of whether the HVAC is running while the car is idle
+ClimateIsHvacOn: Boolean representation of whether the HVAC is running
+ClimateIsFrontDefrosterOn: Boolean representation of whether the front windshield defroster is on
+ClimateIsPreconditioning: Boolean representation - appears to be 1:1 with ClimateIsAutoConditioningOn
+ClimateIsRearDefrosterOn: Boolean representation of whether the rear windshield defroster is on
+ClimateLeftVentDirection: Numeric representation of the set direction for the driver's vent
+ClimateRghtVentDirection: Numeric representation of the set direction for the passenger's vent
+ClimateSeatHeaterDriver: Level to which the driver's seat heater is set (0-3 where 0 is off)
+ClimateSeatHeaterRearCenter: Level to which the rear center seat's heater is set (0-3 where 0 is off)
+ClimateSeatHeaterRearLeft: Level to which the rear left seat's heater is set (0-3 where 0 is off)
+ClimateSeatHeaterRearLeftBack: Level to which the 3rd row rear left seat's heater is set (0-3 where 0 is off)
+ClimateSeatHeaterRearRight: Level to which the rear right seat's heater is set (0-3 where 0 is off)
+ClimateSeatHeaterRearRightBack: Level to which the 3rd row rear right seat's heater is set (0-3 where 0 is off)
+ClimateSeatHeaterPassenger: Level to which the passenger's seat heater is set (0-3 where 0 is off)
+ClimateSideMirrorHeaters: Boolean representation of whether the side mirror heaters are on
+ClimateSmartPreconditioning: Boolean representation of whether smart HVAC preconditioning is on
+ClimateSteeringWheelHeater: Boolean representation of whether the steering wheel heater is on
+ClimateWiperBladeHeater: Boolean representation of whether the wiper blade heater is on
+DoorsLocked: Boolean representation of whether the car's doors are locked
+
+String:
+SummaryName: The user defined name for the car (as assigned from its touchscreen)
+SummaryStatus: The status of the car (offline, online, asleep, etc)
+SummaryVin: The VIN of the car
+BatteryRange: The stated range based on the current charge (units are defined by the user's selected
+				unit in the car's touchscreen settings)
+BatteryLastChargeEnergyAddedKwh: The amount of energy added in the last charging session
+BatteryChargeLimitValue: The set maximum charge percent, as defined by the user via the touchscreen,
+						app, this module, etc
+BatteryLastChargeMilesAdded: The amount of range added in the last charging session
+BatteryChargePortLatchStatus: The current state of the charge port door/latch
+BatteryChargeRate: The number of miles being added per hour while charging
+BatteryChargeActualCurrent: The actual amps being sent to the battery while charging
+BatteryChargingStatus: A value describing whether the car is currently charging or not
+BatteryEstimatedRange: The estimated range available based on the current charge state
+BatteryIdealRange: The range available to drive in theoretically ideal scenarios
+BatteryScheduledChargeStartTime: The time at which scheduled charging will start
+BatteryHoursToFullCharge: The number of hours estimated to charging completion (NOTE: the decimal
+						  value is representative of portions of an hour, not minutes, so 
+						  .25 is equal to 15 minutes)
+ClimateDriverTempSetting: The temperature to which the driver's climate control is set
+ClimateInsideTemp: The temperature inside the car
+ClimateAvailableTempMax: The maximum temperature to which climate control can be set
+ClimateAvailableTempMin: The minimum temperature to which climate control can be set
+ClimateOutsideTemp: The ambient temperature outsid of the car
+ClimatePassengerTempSetting: The temperature to which the passenger's climate control is set
+SettingsDistanceUnits: The units the user has set the distance to (mi/hr or km/hr) via the touchscreen
+SettingsTemperatureUnits: The units the user has set the temperature to (F or C - Kelvin doesn't appear available)
+         
+
+#HELP_END
+
+
+/*******************************************************************************************
+  Include Libraries
+  (Uncomment and include additional libraries as needed)
+*******************************************************************************************/
+
+#USER_SIMPLSHARP_LIBRARY "Tesla Car Communicator v1.0.0"
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+  (Uncomment and declare inputs and outputs as needed)
+*******************************************************************************************/
+DIGITAL_INPUT 
+	GetCarSummary,
+	GetCarDetails,
+	ClimateTurnHvacOn,
+	ClimateTurnHvacOff,
+	BatteryChargingStart,
+	BatteryChargingStop,
+	DoorLock,
+	DoorUnlock,
+	CarWake;
+
+ANALOG_INPUT 
+	SetChargeLevel,
+	SetDriverTemp,
+	SetPassengerTemp,
+	SetDriverSeatHeaterLevel,
+	SetPassengerSeatHeaterLevel,
+	SetRearLeftSeatHeaterLevel,
+	SetRearCenterSeatHeaterLevel,
+	SetRearRightSeatHeaterLevel,
+	SetRearLeftBackSeatHeaterLevel,
+	SetRearRightBackSeatHeaterLevel,
+	Set3rdRowLeftSeatHeaterLevel,
+	Set3rdRowRightSeatHeaterLevel,
+	SetSteeringWheelHeaterLevel;
+
+STRING_INPUT 
+	TokenVal[65534],
+	RefreshTokenVal[65534],
+	TokenCreationDate[200],
+	TokenExpirationDate[200],
+	CarId[50];
+// BUFFER_INPUT 
+
+// DIGITAL_OUTPUT 
+ANALOG_OUTPUT 
+	SummaryInService,
+	BatteryLevel,
+	BatteryChargeAmpsUserDefined,
+	BatteryChargeAmpsMax,
+	BatteryChargeEnableRequest,
+	BatteryChargePortDoorOpen,
+	BatteryChargeToMaxRange,
+	BatteryChargerPhases,
+	BatteryChargerPilotCurrentAmps,
+	BatteryChargerPowerKwh,
+	BatteryChargerVoltage,
+	BatteryScheduledChargePending,
+	BatteryIsChargingForTrip,
+	BatteryUsableChargeLevel,
+	BatteryHeater,
+	BatteryHeaterNoPower,
+	ClimateFanLevel,
+	ClimateIsAutoConditioningOn,
+	ClimateIsHvacOn,
+	ClimateIsFrontDefrosterOn,
+	ClimateIsPreconditioning,
+	ClimateIsRearDefrosterOn,
+	ClimateLeftVentDirection,	
+	ClimateRghtVentDirection,
+	ClimateSeatHeaterDriver,
+	ClimateSeatHeaterRearCenter,
+	ClimateSeatHeaterRearLeft,
+	ClimateSeatHeaterRearLeftBack,
+	ClimateSeatHeaterRearRight,
+	ClimateSeatHeaterRearRightBack,
+	ClimateSeatHeaterPassenger,
+	ClimateSideMirrorHeaters,
+	ClimateSmartPreconditioning,
+	ClimateSteeringWheelHeater,
+	ClimateWiperBladeHeater,
+	DoorsLocked;
+
+STRING_OUTPUT 
+	SummaryName,
+	SummaryStatus,
+	SummaryVin,
+	BatteryRange,
+	BatteryLastChargeEnergyAddedKwh,
+	BatteryChargeLimitValue,
+	BatteryLastChargeMilesAdded,
+	BatteryChargePortLatchStatus,
+	BatteryChargeRate,
+	BatteryChargeActualCurrent,
+	BatteryChargingStatus,
+	BatteryEstimatedRange,
+	BatteryIdealRange,
+	BatteryScheduledChargeStartTime,
+	BatteryHoursToFullCharge,
+	ClimateDriverTempSetting,
+	ClimateInsideTemp,
+	ClimateAvailableTempMax,
+	ClimateAvailableTempMin,
+	ClimateOutsideTemp,
+	ClimatePassengerTempSetting,
+	SettingsDistanceUnits,
+	SettingsTemperatureUnits,
+	SummaryRefreshedDateTime,
+	DetailsRefreshedDateTime;
+
+/*******************************************************************************************
+  Global Variables
+  (Uncomment and declare global variables as needed)
+  Note:  Be sure to initialize all declared STRING variables as needed
+         For example, in Function Main: myString = "";
+*******************************************************************************************/
+// INTEGER
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+Main car;
+
+/*******************************************************************************************
+  Functions
+  (Add any additional functions here)
+  Note:  Functions must be physically placed before the location in
+         the code that calls them.
+*******************************************************************************************/
+Function SetTokenValues()
+{
+	INTEGER hasValues;
+                    
+	hasValues = 0;
+
+	if (LEN(TokenVal) > 0 &&
+		LEN(RefreshTokenVal) > 0 &&
+		LEN(TokenCreationDate) > 0 &&
+		LEN(TokenExpirationDate) > 0)
+		{
+			hasValues = 1;		
+		}
+
+	if (hasValues = 1)
+	{
+		PRINT("%s, %s\n", "Car Processor: Setting Token", TokenVal);
+		car.SetToken(TokenVal, RefreshTokenVal, TokenCreationDate, TokenExpirationDate);
+	}
+}
+
+Function GetCarSummaryResults()
+{
+	STRING RefreshedDate[10];
+	STRING RefreshedTime[8];
+    STRING DateTimeConcat[20];
+
+	VehicleSummaryModel summary;
+ 	car.GetCarSummary();
+	
+	summary = car.Summary;
+
+	SummaryName = summary.Name;
+	SummaryStatus = summary.Status;
+	SummaryVin = summary.Vin;
+	SummaryInService = summary.InService;		
+
+	RefreshedDate = DATE(1);
+	RefreshedTime = TIME();
+    
+	MAKESTRING(DateTimeConcat,"%s %s",  RefreshedDate, RefreshedTime);
+	SummaryRefreshedDateTime = DateTimeConcat;
+
+}
+
+Function CheckCarStatus()
+{
+	STRING desiredStatus[20];
+    INTEGER attempt;
+    VehicleSummaryModel summary;
+               
+	desiredStatus = "online";
+
+ 	GetCarSummaryResults();
+	summary = car.Summary;
+
+	if (desiredStatus <> summary.Status)
+	{
+     	car.WakeCar();
+
+		for (attempt = 1 to 60)
+		{
+         	DELAY(100);
+
+			GetCarSummaryResults();
+            summary = car.Summary;
+
+			If (summary.Status = desiredStatus)
+			{
+             	BREAK;
+			}
+			else
+			{
+             	SummaryStatus = "waking";
+			}
+		}
+	}	
+}
+   
+Function AssignBatteryDetails()
+{
+
+	BatteryLevel = car.Details.BatteryLevel;     
+    BatteryChargeAmpsUserDefined = car.Details.BatteryChargeAmpsUserDefined;
+    BatteryChargeAmpsMax = car.Details.BatteryChargeAmpsMax;
+    BatteryChargeEnableRequest = car.Details.BatteryChargeEnableRequest;
+    BatteryChargePortDoorOpen = car.Details.BatteryChargePortDoorOpen;
+    BatteryChargeEnableRequest = car.Details.BatteryChargeEnableRequest;
+	BatteryChargeToMaxRange = car.Details.BatteryChargeToMaxRange;
+	BatteryChargerPhases = car.Details.BatteryChargerPhases;
+	BatteryChargerPilotCurrentAmps = car.Details.BatteryChargerPilotCurrentAmps;
+	BatteryChargerPowerKwh = car.Details.BatteryChargerPowerKwh;
+	BatteryChargerVoltage = car.Details.BatteryChargerVoltage;
+	BatteryScheduledChargePending = car.Details.BatteryScheduledChargePending;
+	BatteryIsChargingForTrip = car.Details.BatteryIsChargingForTrip;
+	BatteryUsableChargeLevel = car.Details.BatteryUsableChargeLevel;
+	BatteryRange = car.Details.BatteryRange;
+	BatteryLastChargeEnergyAddedKwh = car.Details.BatteryLastChargeEnergyAddedKwh;
+	BatteryChargeLimitValue = car.Details.BatteryChargeLimitValue;
+	BatteryLastChargeMilesAdded = car.Details.BatteryLastChargeMilesAdded;
+	BatteryChargePortLatchStatus = car.Details.BatteryChargePortLatchStatus;
+	BatteryChargeRate = car.Details.BatteryChargeRate;
+	BatteryChargeActualCurrent = car.Details.BatteryChargeActualCurrent;
+	BatteryChargingStatus = car.Details.BatteryChargingStatus;
+	BatteryEstimatedRange = car.Details.BatteryEstimatedRange;
+	BatteryIdealRange = car.Details.BatteryIdealRange;
+	BatteryScheduledChargeStartTime = car.Details.BatteryScheduledChargeStartTime;
+	BatteryHoursToFullCharge = car.Details.BatteryHoursToFullCharge;
+    BatteryHeater = car.Details.BatteryHeater;
+    BatteryHeaterNoPower = car.Details.BatteryHeaterNoPower;
+}
+  
+Function AssignClimateDetails()
+{
+	ClimateFanLevel = car.Details.ClimateFanLevel;
+	ClimateIsAutoConditioningOn = car.Details.ClimateIsAutoConditioningOn;
+	ClimateIsHvacOn = car.Details.ClimateIsHvacOn;
+	ClimateIsFrontDefrosterOn = car.Details.ClimateIsFrontDefrosterOn;
+	ClimateIsPreconditioning = car.Details.ClimateIsPreconditioning;
+	ClimateIsRearDefrosterOn = car.Details.ClimateIsRearDefrosterOn;
+	ClimateLeftVentDirection = car.Details.ClimateLeftVentDirection;
+	ClimateRghtVentDirection = car.Details.ClimateRghtVentDirection;
+	ClimateSeatHeaterDriver = car.Details.ClimateSeatHeaterDriver;
+	ClimateSeatHeaterRearCenter = car.Details.ClimateSeatHeaterRearCenter;
+	ClimateSeatHeaterRearLeft = car.Details.ClimateSeatHeaterRearLeft;
+	ClimateSeatHeaterRearLeftBack = car.Details.ClimateSeatHeaterRearLeftBack;
+	ClimateSeatHeaterRearRight = car.Details.ClimateSeatHeaterRearRight;
+	ClimateSeatHeaterRearRightBack = car.Details.ClimateSeatHeaterRearRightBack;
+	ClimateSeatHeaterPassenger = car.Details.ClimateSeatHeaterPassenger;
+	ClimateSideMirrorHeaters = car.Details.ClimateSideMirrorHeaters;
+	ClimateSmartPreconditioning = car.Details.ClimateSmartPreconditioning;
+	ClimateSteeringWheelHeater = car.Details.ClimateSteeringWheelHeater;
+	ClimateWiperBladeHeater = car.Details.ClimateWiperBladeHeater;
+	ClimateDriverTempSetting = car.Details.ClimateDriverTempSetting;
+	ClimateInsideTemp = car.Details.ClimateInsideTemp;
+	ClimateAvailableTempMax = car.Details.ClimateAvailableTempMax;
+
+	ClimateAvailableTempMin = car.Details.ClimateAvailableTempMin;
+	ClimateOutsideTemp = car.Details.ClimateOutsideTemp;
+	ClimatePassengerTempSetting = car.Details.ClimatePassengerTempSetting;	
+}
+
+Function AssignUserSettings()
+{
+ 	SettingsDistanceUnits = car.Details.SettingsDistanceUnits;
+	SettingsTemperatureUnits = car.Details.SettingsTempUnits;
+}
+                       
+Function AssignStateDetails()
+{
+ 	DoorsLocked = car.Details.VehicleDoorsLocked;
+}
+
+Function GetCarDetailsResults()
+{	
+	STRING RefreshedDate[10];
+	STRING RefreshedTime[8];
+	STRING DateTimeConcat[20];
+
+	CheckCarStatus();
+	car.GetCarDetails();  
+             
+	AssignBatteryDetails();
+	AssignClimateDetails();
+	AssignStateDetails();
+	AssignUserSettings();
+
+	RefreshedDate = DATE(1);
+	RefreshedTime = TIME();
+                      
+	MAKESTRING(DateTimeConcat, "%s %s", RefreshedDate, RefreshedTime);
+	DetailsRefreshedDateTime = DateTimeConcat;
+}
+
+Function GetClimateHvacStartResults()
+{
+ 	CheckCarStatus();
+	car.HvacStart();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetClimateHvacStopResults()
+{
+ 	CheckCarStatus();
+	car.HvacStop();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetDriverSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetDriverSeatHeater(SetDriverSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetPassengerSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetPassengerSeatHeater(SetPassengerSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+        
+Function GetRearLeftSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetRearLeftSeatHeater(SetRearLeftSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+           
+Function GetRearCenterSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetRearCenterSeatHeater(SetRearCenterSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+           
+Function GetRearRightSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetRearRightSeatHeater(SetRearRightSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+       
+Function GetRearLeftBackSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetRearLeftBackSeatHeater(SetRearLeftBackSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+       
+Function GetRearRightBackSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetRearRightBackSeatHeater(SetRearRightBackSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+       
+Function Get3rdRowLeftSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSet3rdRowLeftSeatHeater(Set3rdRowLeftSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+       
+Function Get3rdRowRightSeatHeaterResults()
+{
+ 	CheckCarStatus();
+	car.HvacSet3rdRowRightSeatHeater(Set3rdRowRightSeatHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetSteeringWheelHeaterResults()
+{
+	CheckCarStatus();
+	car.HvacSetSteeringWheelHeater(SetSteeringWheelHeaterLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetBatteryChargingStartResults()
+{
+	CheckCarStatus();
+	car.ChargerStart();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+  
+Function GetBatteryChargingStopResults()
+{
+	CheckCarStatus();
+	car.ChargerStop();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetDoorLockResults()
+{
+    CheckCarStatus();
+	car.DoorLock();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+      
+Function GetDoorUnlockResults()
+{
+    CheckCarStatus();
+	car.DoorUnlock();
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetCarWakeUpResults()
+{
+ 	CheckCarStatus();
+	car.WakeCar();
+	GetCarDetailsResults();
+}
+
+Function GetBatterySetChargeLevelResults()
+{
+ 	CheckCarStatus();
+	car.SetChargeLevel(SetChargeLevel);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+Function GetClimateSetDriverTempResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetDriverLevel(SetDriverTemp);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+   
+Function GetClimateSetPassengerTempResults()
+{
+ 	CheckCarStatus();
+	car.HvacSetPassengerLevel(SetPassengerTemp);
+	DELAY(100);
+	GetCarDetailsResults();
+}
+
+/*
+Function MyFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+}
+*/
+
+/*
+Integer_Function MyIntFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+
+    Return (0);
+}
+*/
+
+/*
+String_Function MyStrFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+
+    Return ("");
+}
+*/
+
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+ThreadSafe CHANGE TokenVal
+{
+ 	SetTokenValues();
+}
+
+ThreadSafe CHANGE RefreshTokenVal
+{
+ 	SetTokenValues();
+}
+
+ThreadSafe CHANGE TokenCreationDate
+{
+ 	SetTokenValues();
+}
+
+ThreadSafe CHANGE TokenExpirationDate
+{
+ 	SetTokenValues();
+}
+
+ThreadSafe CHANGE CarId
+{
+	PRINT("Car Processor: Setting Car ID to '%s'", CarId);
+ 	car.CarId = CarId;
+}
+
+ThreadSafe PUSH GetCarSummary
+{
+	GetCarSummaryResults();	
+}
+
+ThreadSafe PUSH GetCarDetails
+{
+ 	GetCarDetailsResults();
+}
+
+ThreadSafe PUSH ClimateTurnHvacOn
+{
+ 	GetClimateHvacStartResults();
+}
+
+ThreadSafe PUSH ClimateTurnHvacOff
+{
+ 	GetClimateHvacStopResults();
+}
+              
+ThreadSafe CHANGE SetDriverSeatHeaterLevel
+{
+	GetDriverSeatHeaterResults();
+}
+    
+ThreadSafe CHANGE SetPassengerSeatHeaterLevel
+{
+	GetPassengerSeatHeaterResults();
+}
+
+ThreadSafe CHANGE SetRearLeftSeatHeaterLevel
+{
+	GetRearLeftSeatHeaterResults();
+}
+      
+ThreadSafe CHANGE SetRearCenterSeatHeaterLevel
+{
+	GetRearCenterSeatHeaterResults();
+}
+
+ThreadSafe CHANGE SetRearRightSeatHeaterLevel
+{
+	GetRearRightSeatHeaterResults();
+}
+ 
+ThreadSafe CHANGE SetRearLeftBackSeatHeaterLevel
+{
+	GetRearLeftBackSeatHeaterResults();
+}
+ 
+ThreadSafe CHANGE SetRearRightBackSeatHeaterLevel
+{
+	GetRearRightBackSeatHeaterResults();
+}
+
+ThreadSafe CHANGE Set3rdRowLeftSeatHeaterLevel
+{
+	Get3rdRowLeftSeatHeaterResults();
+}
+ 
+ThreadSafe CHANGE Set3rdRowRightSeatHeaterLevel
+{
+	Get3rdRowRightSeatHeaterResults();
+}
+
+ThreadSafe CHANGE SetSteeringWheelHeaterLevel
+{
+	GetSteeringWheelHeaterResults();
+}
+
+ThreadSafe PUSH BatteryChargingStart
+{
+ 	GetBatteryChargingStartResults();
+}
+
+ThreadSafe PUSH BatteryChargingStop
+{
+ 	GetBatteryChargingStopResults();
+}
+
+ThreadSafe PUSH DoorLock
+{
+ 	GetDoorLockResults();
+}
+
+ThreadSafe PUSH DoorUnlock
+{
+ 	GetDoorUnlockResults();
+}
+
+ThreadSafe PUSH CarWake
+{
+ 	GetCarWakeUpResults();
+}
+
+ThreadSafe CHANGE SetChargeLevel
+{
+ 	GetBatterySetChargeLevelResults();
+}
+
+ThreadSafe CHANGE SetDriverTemp
+{
+ 	GetClimateSetDriverTempResults();
+}
+
+ThreadSafe CHANGE SetPassengerTemp
+{
+ 	GetClimateSetPassengerTempResults();
+}
+/*
+PUSH input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+
