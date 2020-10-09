@@ -19,7 +19,7 @@ namespace SimplTeslaCar.Results.PostResults
             Stop
         }
 
-        public HvacControlResult(string vehicleId, HvacStates setToState) :
+        public HvacControlResult(HvacStates setToState) :
             base(
                 (setToState == HvacStates.Start ? CommandUrls.HvacStart : CommandUrls.HvacStop)
             )

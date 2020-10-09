@@ -7,7 +7,7 @@ using Crestron.SimplSharp;
 using SimplTeslaMaster.Data;
 using SimplTeslaMaster.Results.GetResults;
 
-namespace SimplTeslaMaster.Models
+namespace SimplTeslaMaster
 {
     /// <summary>
     /// Clsss to expose Vehicle List data to th Crestron processor

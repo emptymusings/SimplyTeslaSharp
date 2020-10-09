@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Crestron.SimplSharp;
 
-using SimplTeslaMaster.Models;
 
 namespace SimplTeslaMaster
 {

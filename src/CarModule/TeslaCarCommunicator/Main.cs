@@ -296,7 +296,7 @@ namespace SimplTeslaCar
         {
             try
             {
-                HvacControlResult result = new HvacControlResult(Settings.CarId, HvacControlResult.HvacStates.Start);
+                HvacControlResult result = new HvacControlResult(HvacControlResult.HvacStates.Start);
                 result.GetResult();
             }
             catch (Exception ex)
@@ -312,7 +312,7 @@ namespace SimplTeslaCar
         {
             try
             {
-                HvacControlResult result = new HvacControlResult(Settings.CarId, HvacControlResult.HvacStates.Stop);
+                HvacControlResult result = new HvacControlResult(HvacControlResult.HvacStates.Stop);
                 result.GetResult();
             }
             catch (Exception ex)
@@ -320,6 +320,181 @@ namespace SimplTeslaCar
                 CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacStop()::Error sending HVAC Stop: " + ex.ToString());
             }
         }
+
+        /// <summary>
+        /// Sets the Driver Seat Heater to the desired level        
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetDriverSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterFrontLeft, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetDriverSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Passenger Seat Heater to the desired level        
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetPassengerSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterFrontRight, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetPassengerSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Driver's side Seat Heater to the desired level        
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetRearLeftSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterRearLeft, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetRearLeftSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Center Seat Heater to the desired level        
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetRearCenterSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterRearCenter, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetRearCenterSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Passenger Seat Heater to the desired level        
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetRearRightSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterRearRight, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetRearRightSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Left "Back" Seat Heater to the desired level UNTESTED.  Also, it is unclear what the difference is between this and 3rd row, 
+        /// but I believe it to be the optional rear facing seats for the Tesla Model S
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetRearLeftBackSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterRearLeftBack, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetRearLeftBackSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Right "Back" Seat Heater to the desired level UNTESTED.  Also, it is unclear what the difference is between this and 3rd row, 
+        /// but I believe it to be the optional rear facing seats for the Tesla Model S
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSetRearRightBackSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeaterRearRightBack, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetRearRightBackSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Left 3rd Row Seat Heater to the desired level UNTESTED.  Also, it is unclear what the difference is between this and 3rd row, 
+        /// but I believe it to be the optional 3rd Row seats for the Tesla Model X
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSet3rdRowLeftSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeater3rdRowLeft, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSet3rdRowLeftSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the Rear Left 3rd Row Seat Heater to the desired level UNTESTED.  Also, it is unclear what the difference is between this and 3rd row, 
+        /// but I believe it to be the optional 3rd Row seats for the Tesla Model X
+        /// </summary>
+        /// <param name="level">0 = off; 1 = low; 2 = medium; 3 = high</param>
+        public void HvacSet3rdRowRightSeatHeater(int level)
+        {
+            try
+            {
+                HvacSetSeatHeaterResult result = new HvacSetSeatHeaterResult(HvacSetSeatHeaterResult.SeatHeaterPositions.SeatHeater3rdRowRight, level);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSet3rdRowRightSeatHeater()::Error sending command: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Sets the steering wheel heater on or off
+        /// </summary>
+        /// <param name="turnOn">0 = turn off, all other values = turn on</param>
+        public void HvacSetSteeringWheelHeater(int turnOn)
+        {
+            try
+            {
+                HvacSetSteeringWheelHeaterResult result = new HvacSetSteeringWheelHeaterResult(turnOn);
+                result.GetResult();
+            }
+            catch (Exception ex)
+            {
+                CrestronConsole.PrintLine("SimplTeslaCar.Main.HvacSetSteeringWheelHeater()::Error sending commmand: " + ex.ToString());
+            }
+        }
+
 
         /// <summary>
         /// Lock's the car's doors

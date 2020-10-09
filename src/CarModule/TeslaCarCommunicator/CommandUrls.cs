@@ -132,5 +132,29 @@ namespace SimplTeslaCar
                 return result;
             }
         }
+
+        public static string HvacSetSeatHeater 
+        {
+            get
+            {
+                string result;
+
+                result = baseCommandUrl + Constants.URL_COMMAND_HVAC_SEAT_HEATER;
+
+                return result;
+            }
+        }
+
+        public static string HvacSetSteeringWheelHeater
+        {
+            get
+            {
+                string result;
+
+                result = baseCommandUrl + Constants.URL_COMMAND_HVAC_STEERING_WHEEL_HEATER;
+
+                return result;
+            }
+        }
     }
 }

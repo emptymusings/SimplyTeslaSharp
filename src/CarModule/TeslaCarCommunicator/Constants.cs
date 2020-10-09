@@ -22,5 +22,7 @@ namespace SimplTeslaCar
         internal const string URL_COMMAND_HVAC_START = URL_COMMAND_HVAC_BASE + "start";
         internal const string URL_COMMAND_HVAC_STOP = URL_COMMAND_HVAC_BASE + "stop";
         internal const string URL_COMMAND_HVAC_SET_TEMP = URL_COMMAND + "/set_temps";
+        internal const string URL_COMMAND_HVAC_SEAT_HEATER = URL_COMMAND + "/remote_seat_heater_request";
+        internal const string URL_COMMAND_HVAC_STEERING_WHEEL_HEATER = URL_COMMAND + "//emote_steering_wheel_heater_request";
     }
 }

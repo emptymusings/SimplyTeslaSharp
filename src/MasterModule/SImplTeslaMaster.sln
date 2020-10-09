@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesla Master v1.0.0", "SImplTeslaMaster\Tesla Master v1.0.0.csproj", "{08F597AF-46AC-4C4D-B0B7-F6AB6EC685CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplTeslaMaster", "SImplTeslaMaster\SimplTeslaMaster.csproj", "{08F597AF-46AC-4C4D-B0B7-F6AB6EC685CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
