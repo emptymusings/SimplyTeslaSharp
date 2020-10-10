@@ -60,7 +60,7 @@ This module is used issue commands and gather information specific to a single v
 | Get_Car_Summary | Digital | Requests summary information from the associated vehicle (**NOTE:** this request does not wake car and should have no impact on battery range) |
 | Set_Charge_Level | Integer | Sets the charge level limit to the value indicated (50-100%) |
 | Battery_Charging_Start | Digital | Sends a command to the associated vehicle to start charging the drive battery (if the preset charge limit has not been reached) |
-| BatteryChargingStop | Digital | Sends a command to the associated vehicle to stop charging the drive battery |
+| Battery_Charging_Stop | Digital | Sends a command to the associated vehicle to stop charging the drive battery |
 | Climate_Turn_Hvac_On | Digital | Turns the vehicle's climate control on |
 | Climate_Turn_Hvac_Off | Digital | Turns the vehicle's climate control off |
 | Climate_Set_Driver_Temp | Integer | Sets the isolated climate control temperature for the driver's side to the entered value |
