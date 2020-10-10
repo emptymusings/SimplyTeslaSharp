@@ -41,8 +41,19 @@ This module is predominantly used for authentication and authorization, as well 
 | Is_Logged_In | Digital | Value that identifies whether the module has authenticated with Tesla's API |
 | Car_Count | Integer | The number of cars associated with the user's Tesla account |
 | Login_Token_FB | String | The authorization bearer token used to make any requests with the API |
-| Login_Token_Created_FB | String | The date and time that the authorizationn token was created (all times are GMT) |
+| Login_Token_Created_FB | String | The date and time that the authorization token was created (all times are GMT) |
 | Login_Token_Expires_FB | String | The date and time that the authorization token will/has expired (all times are GMT) |
 | Login_Refresh_Token_FB | String | The token to be used in order to refresh/regenerate the authorization token. |
 | Car_Id\[1-5] | String | The Tesla assigned ID value for a vehicle, used to route requests.  Currently, the Tesla Master Processor supports up to 5 cars |
 
+### Tesla Car Processor
+This module is used issue commands and gather information specific to a single vehicle.  It should be noted that most commands will "wake" the vehicle, and if set on a timed polling schedule might affect battery charge (and therefor range) if sent frequently.  Commands that do not wake the vehicle will be noted.
+
+### Inputs
+| Signal Name | Signal Type | Description |
+| ----------- | ----------- | ----------- |
+| Token | String | The authorization token obtained when logging in (should be linked to the associated Tesla Master Processor's Login_Token_FB signal) |
+| Refresh_Token | String | The authorization refresh token (should be linked to the associated Tesla Master Processor's Login_Refresh_Token_FB signal) |
+| Token_Created_Date | String | The date and time that the authorization token was generated (should be linked to the Tesla Master Processor's Login_Token_Created_FB signal) |
+| Token_Expiration_Date | String | The date and time that the current active token will/has expired (should be linked to the associated Tesla Master Processor's Login_Token_Expires_FB signal) |
+| Car_ID | String | The Tesla assigned ID value for the vehicle, used to route requests (should be linked to one of the Tesla Master Processor's Car_Id signals) |
