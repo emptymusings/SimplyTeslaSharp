@@ -57,3 +57,14 @@ This module is used issue commands and gather information specific to a single v
 | Token_Created_Date | String | The date and time that the authorization token was generated (should be linked to the Tesla Master Processor's Login_Token_Created_FB signal) |
 | Token_Expiration_Date | String | The date and time that the current active token will/has expired (should be linked to the associated Tesla Master Processor's Login_Token_Expires_FB signal) |
 | Car_ID | String | The Tesla assigned ID value for the vehicle, used to route requests (should be linked to one of the Tesla Master Processor's Car_Id signals) |
+| Get_Car_Summary | Digital | Requests summary information from the associated vehicle (**NOTE:** this request does not wake car and should have no impact on battery range) |
+| Set_Charge_Level | Integer | Sets the charge level limit to the value indicated (50-100%) |
+| Battery_Charging_Start | Digital | Sends a command to the associated vehicle to start charging the drive battery (if the preset charge limit has not been reached) |
+| BatteryChargingStop | Digital | Sends a command to the associated vehicle to stop charging the drive battery |
+| Climate_Turn_Hvac_On | Digital | Turns the vehicle's climate control on |
+| Climate_Turn_Hvac_Off | Digital | Turns the vehicle's climate control off |
+| Climate_Set_Driver_Temp | Integer | Sets the isolated climate control temperature for the driver's side to the entered value |
+| Climate_Set_Passenger_Temp | Integer | Sets the isolated climate control temperature for the passenger's side to the entered value |
+| Set_Driver_Seat_Heater_Level
+Set_Passenger_Seat_Heater_Level | Integer | Sets the seat heater to the level assigned: 0 = off, 1 = low, 2 = medium, 3 = high |
+
