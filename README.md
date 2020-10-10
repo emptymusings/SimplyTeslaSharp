@@ -38,7 +38,7 @@ This module is predominantly used for authentication and authorization, as well 
 #### Outputs
 | Signal Name | Signal Type | Description |
 | ----------- | ----------- | ----------- |
-| Is_Logged_In | Digital | Value that identifies whether the module has authenticated with Tesla's API (0 = false, 1 = true) |
+| Is_Logged_In | Digital | Value that identifies whether the module has authenticated with Tesla's API |
 | Car_Count | Integer | The number of cars associated with the user's Tesla account |
 | Login_Token_FB | String | The authorization bearer token used to make any requests with the API |
 | Login_Token_Created_FB | String | The date and time that the authorizationn token was created (all times are GMT) |
