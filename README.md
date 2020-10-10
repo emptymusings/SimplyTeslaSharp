@@ -70,3 +70,32 @@ This module is used issue commands and gather information specific to a single v
 | Door_Lock | Digital | Locks all of the vehicle's doors |
 | Door_Unlock | Digital | Unlocks all of the vehicle's doors |
 | Car_Wake_Up | Digital | Wakes the vehicle up if it is sleeping, might be useful if commands are timing out |
+
+### Outputs
+| Signal Name | Signal Type | Description |
+| ----------- | ----------- | ----------- |
+| Car_Name | String | The name of the vehicle that the user has set |
+| Car_Status | String | Description of the car's state in terms of power-saving mode.  Possible results:<br>asleep - power saving mode<br>waking - a request has been sent, but the car was asleep, and cannot report the results until it's online<br>online |
+| Car_In_Service | Integer | Boolean value (0d or 1d) showing whether the vehicle is currently being drive |
+| Car_Vin | String | The vehicle's VIN |
+| Battery_Level | Integer | The vehicle's current level of battery remaining (0-100%) |
+| Battery_Charge_Amps_UserDefined | Integer | The user defined amperage to charge the vehicle at (set via the vehicle's touchscreen) |
+| Battery_Charge_Amps_Max | Integer | The maximum of amperage that the vehicle is able to charge at, based on the onboard charger's maximum amperage |
+| Battery_Charge_Enable_Request | Integer | (Unverified, but suspected) Boolean value showing whether charging can be initiated via the API |
+| Battery_Charge_Port_Door_Open | Integer | Boolean value that shows whether the vehicle's charge port door is currently open |
+| Battery_Charge_to_Max_Range | Integer | Boolean value that shows if the vehicle is set to maximum charge (100%) |
+| Battery_Charger_Phases | Integer | Unknown (to me) at this time |
+| Battery_Charge_Pilot_Current_Amps | Integer | Appears to be another notation of amperage |
+| Battery_Charger_Power_kWh | Integer | The total kWh currently being drawn by the charger |
+| Battery_Charger_Voltage | Integer | The total voltage being currently being drawn by the charger |
+| Battery_Is_Charging_For_Trip | Integer | Boolean value.  While the name *should* make its usage intuitive, I have not observed this value being **true** yet |
+| Battery_Usable_Charge_Level | Integer | Displays the percent of battery available for use |
+| Battery_Range | String | Total miles/kilometers (depending on user's settings) estimated to be available at current charge state |
+| Battery_Last_Charge_Energy_Added_kWh | String | The total number of kWh added to the battery during the last charging session |
+| Battery_Charge_Limit_Value | String | The user entered maximum charge level |
+| Battery_Last_Charge_Miles_Added | String | The total miles added to the battery during the last charging session |
+| Battery_Charge_Port_Latch_Status | String | I have not observed a value other than "Engaged" - even when the vehicle is unplugged |
+| Battery_Charge_Rate | String | The amperage at which the vehicle's battery is charging |
+
+
+**TODO: Continue documenting Tesla Car Processor OUTPUTS**
