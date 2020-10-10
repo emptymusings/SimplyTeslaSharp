@@ -218,7 +218,17 @@ namespace SimplTeslaCar
 
             try
             {
-                rounded = HvacGetConvertedLevel(desiredTemperature).ToString("#0.##");
+                HvacSetTempUnits();
+
+                if (Settings.TemperatureUnits == "F")
+                {
+                    rounded = Calculators.GetTempCelsiusFromFarenheit(Convert.ToDecimal(desiredTemperature)).ToString("0.##");
+                }
+                else
+                {
+                    rounded = desiredTemperature.ToString();
+                }
+
                 convertedLevel = Convert.ToDecimal(rounded);
                 result = new HvacSetLevelResult(convertedLevel, HvacSetLevelResult.TempLocations.Driver);
                 result.GetResult();
@@ -243,7 +253,17 @@ namespace SimplTeslaCar
 
             try
             {
-                rounded = HvacGetConvertedLevel(desiredTemperature).ToString("#0.##");
+                HvacSetTempUnits();
+
+                if (Settings.TemperatureUnits == "F")
+                {
+                    rounded = Calculators.GetTempCelsiusFromFarenheit(Convert.ToDecimal(desiredTemperature)).ToString("0.##");
+                }
+                else
+                {
+                    rounded = desiredTemperature.ToString();
+                }
+
                 convertedLevel = Convert.ToDecimal(rounded);
                 result = new HvacSetLevelResult(convertedLevel, HvacSetLevelResult.TempLocations.Passenger);
                 result.GetResult();

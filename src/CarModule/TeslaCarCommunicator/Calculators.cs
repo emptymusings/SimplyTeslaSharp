@@ -60,6 +60,17 @@ namespace SimplTeslaCar
             return calcTemp;
         }
 
+        public static decimal GetTempCelsiusFromFarenheit(decimal temp)
+        {
+            decimal calcTemp = temp;
+            decimal celsiusConversion = 1.8M;
+
+            calcTemp = calcTemp - 32;
+            calcTemp = calcTemp / celsiusConversion;
+
+            return calcTemp;
+        }
+
         /// <summary>
         /// Converts a temperature value from the vehicle to the user preferred unit (celsius or farenheit, as defined in the car's configuration by the user)
         /// </summary>
