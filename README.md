@@ -65,6 +65,8 @@ This module is used issue commands and gather information specific to a single v
 | Climate_Turn_Hvac_Off | Digital | Turns the vehicle's climate control off |
 | Climate_Set_Driver_Temp | Integer | Sets the isolated climate control temperature for the driver's side to the entered value |
 | Climate_Set_Passenger_Temp | Integer | Sets the isolated climate control temperature for the passenger's side to the entered value |
-| Set_Driver_Seat_Heater_Level
-Set_Passenger_Seat_Heater_Level | Integer | Sets the seat heater to the level assigned: 0 = off, 1 = low, 2 = medium, 3 = high |
-
+| Climate_Set_Driver_Seat_Heater_Level<br>Climate_Set_Rear_Center_Seat_Heater_Level<br>Climate_Set_Rear_Left_Back_Seat_Heater_Level<br>Climate_Set_Rear_Right_Seat_Heater_Level<br>Climate_Set_Rear_Right_Back_Seat_Heater_Level<br>Climate_Set_Passenger_Seat_Heater_Level | Integer | Sets the seat heater to the level assigned:<br>0 = off<br>1 = low<br>2 = medium<br>3 = high<br>**NOTE:** Due to logic in Tesla's API, these calls will not function **unless the Climate Control is turned on** |
+| Climate_Set_Steering_Wheel_Heater_Level | Integer | Turns the Steering Wheel Heater on/off (on = 1, off = 2) **UNTESTED** |
+| Door_Lock | Digital | Locks all of the vehicle's doors |
+| Door_Unlock | Digital | Unlocks all of the vehicle's doors |
+| Car_Wake_Up | Digital | Wakes the vehicle up if it is sleeping, might be useful if commands are timing out |
