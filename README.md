@@ -3,7 +3,7 @@ Simpl# libraries used in order to connect the Crestron Series 3 home automation 
 
 ## Requirements:
 * Crestron Simpl Windows application
-* Crestron Series 3 processor
+* Crestron Series 3 processor (while the compile process works for the Series 4 processor, I do not have one to test on, and therefore cannot verify compatibility)
 
 ## Prerequisites:
 * A working knowledge of Crestron SIMPL Windows.  
@@ -96,6 +96,35 @@ This module is used issue commands and gather information specific to a single v
 | Battery_Last_Charge_Miles_Added | String | The total miles added to the battery during the last charging session |
 | Battery_Charge_Port_Latch_Status | String | I have not observed a value other than "Engaged" - even when the vehicle is unplugged |
 | Battery_Charge_Rate | String | The amperage at which the vehicle's battery is charging |
-
-
-**TODO: Continue documenting Tesla Car Processor OUTPUTS**
+| Battery_Charge_Actual_Current | String | Another metric of the amperage at which the vehicle's battery is charging, rounded to the nearest amps |
+| Battery_Charging_Status | String | Values:<br>Starting<br>Charging<br>Complete<br>Disconnected<br>Stopped<br>NoPower |
+| Battery_Estimated_Range | String | The estimated number of miles or km that the vehicle is able to drive based on its current charged amount.  I am unsure how Tesla calculates this value vs the ideal range |
+| Battery_Ideal_Range | String | The ideal number of miles or km that the vehicle is able to drive based on its current charged amount.  I am unsure how Tesla calculates this value vs the estimated range |
+| Battery_Scheduled_Charge_Start_Time | String | The time scheduled to start charging based on user entry in the vehicle's touchscreen |
+| Battery_Hours_to_Full_Charge | String | A decimal representation of the total hours left to charge to the user's selected battery level (e.g. 1.25 would be equivalent to 1 hour and 15 minutes) |
+| Battery_Heater | String | Boolean value indicating whether the battery heater is on or off |
+| Battery_Heater_No_Power | String | Boolean value indicating whether there is sufficient power to operate the battery heater |
+| Climate_Fan_Level | Integer | A value ranging from 0-7 indicating the fan level (0 = off, 7 = maximum) |
+| Climate_Auto_Conditioning_Is_On | Integer | Boolean value indicating whether automatic climate control/battery beating set to auto or manual |
+| Climage_Hvac_Is_On | Integer | Boolean value indicating whether climate control is on or off |
+| Climate_Front_Defroster_On | Integer | Boolean value indicating whether the windshield's defroster is on or off |
+| Climate_Preconditioning | Integer | Boolean value indicating whether the vehicle is preconditioning |
+| Climate_Rear_Defroster_Is_on | Integer | Boolean value indicating whether the rear defroster is on or off |
+| Climate_Left_Vent_Direction | Integer | Value indicating the position of the driver-side vent |
+| Climate_Right_Vent_Direction | Integer | Value indicating the position of the passenger-side vent |
+| Climate_Seat_Heater_Driver<br>Climate_Seat_Heater_Rear_Center<br>Climate_Seat_Heater_Rear_Center<br>Climate_Seat_Heater_Rear_Left<br>Climate_Seat_Heater_Rear_Left_Back<br>Climate_Seat_Heater_Rear_Right<br>Climate_Seat_Heater_Rear_Right_BackClimate_Seat_Heater_Passenger | Integer | The level at which the a seat heater is operating:<br>0 = off<br>1 = low<br>2 = medium<br>3 = high |
+| Climate_Side_Mirror_Heaters | Integer | Boolean value indicating whether the vehicle's side mirror heaters are operating |
+| Climate_Smart_Preconditioning | Integer | Boolean value indicating whether the vehicle is using smart preconditioning |
+| Climate_Steering_Wheel_Heater | Integer | Boolean value indicating whether the steering wheel heater is on or off |
+| Climate_Wiper_Blade_Heater | Integer | Boolean value indicating whether the windshield wiper blade heater is on or off |
+| Climate_Driver_Temp_Settings | String | The temperate set for the driver-side climate control |
+| Climate_Inside_Temp | String | The current interior temperature of the vehicle |
+| Climate_Available_Temp_Max | String | The maximum available temperature to which the climate control can be set |
+| Climate_Available_Temp_Min | String | The minimum available temperature to which the climate control can be set |
+| Climate_Outside_Temp | String | The current temperature outside of the vehicle |
+| Climate_Passenger_Temp_Setting | String | The temperate set for the passenger-side climate control |
+| Settings_Units_Distance | String | The units used to measure distance (miles/km) |
+| Settings_Units_Temperature | String | The units used to measure temperature (F/C) |
+| Car_Doors_Locked | Integer | Boolean value indicating whether the vehicle's doors are locked |
+| Summary_Refreshed_Date_Time | String | Date/Time value indicating when the summary data was last refreshed |
+| Details_Refreshed_Date_Time | String | Date/Time value indicating when the detailed data was last refreshed |
