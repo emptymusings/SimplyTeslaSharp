@@ -44,5 +44,5 @@ This module is predominantly used for authentication and authorization, as well 
 | Login_Token_Created_FB | String | The date and time that the authorizationn token was created (all times are GMT) |
 | Login_Token_Expires_FB | String | The date and time that the authorization token will/has expired (all times are GMT) |
 | Login_Refresh_Token_FB | String | The token to be used in order to refresh/regenerate the authorization token.  This makes automatically refreshing when it expires possible |
-| Car_Id\[1-5] | String | The Tesla assigned ID value for the vehicle used for routing requests.  Currently, the Tesla Master Processor supports up to 5 cars |
+| Car_Id\[1-5] | String | The Tesla assigned ID value for a vehicle, used to route requests.  Currently, the Tesla Master Processor supports up to 5 cars |
 
