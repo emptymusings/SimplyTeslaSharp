@@ -1,6 +1,11 @@
 # SimplyTeslaSharp
 Simpl# libraries used in order to connect the Crestron Series 3 home automation system to a Tesla Vehicle
 
+# IMPORTANT
+As of the end of January, 2021, Tesla has changed their server and method for authenticating users.  As it stands, this application will no longer work.  Progress is being made on updating the authorization token path, and handling the addition of MFA, but **consider this repository on hold** until a solution is found.
+
+More progress can be found at https://tesla-api.timdorr.com/api-basics/authentication
+
 ## Requirements:
 * Crestron Simpl Windows application
 * Crestron Series 3 processor (while the compile process works for the Series 4 processor, I do not have one to test on, and therefore cannot verify compatibility)
