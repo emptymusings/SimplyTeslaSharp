@@ -9,7 +9,7 @@ namespace SimplTeslaMaster.Tokens
     /// <summary>
     /// Class used to generate the form data for an auth token request
     /// </summary>
-    internal class TokenRequestParameters
+    internal class TokenRequestParametersV1
     {
         private string _grant_type = "password";
         /// <summary>

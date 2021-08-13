@@ -9,7 +9,7 @@ namespace SimplTeslaMaster.Tokens
     /// <summary>
     /// Class representation of a Tesla authorization token
     /// </summary>
-    internal class Token
+    internal class TokenV1
     {
         public string access_token { get; set; }
         public string token_type { get; set; }

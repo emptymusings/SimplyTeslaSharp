@@ -84,9 +84,9 @@
     <Compile Include="Results\GetResults\VehicleListGetResult.cs" />
     <Compile Include="Results\GetResults\VehicleSummaryGetResult.cs" />
     <Compile Include="Results\PostResults\PostResultBase.cs" />
-    <Compile Include="Tokens\Token.cs" />
-    <Compile Include="Tokens\TokenGenerator.cs" />
-    <Compile Include="Tokens\TokenRequestParameters.cs" />
+    <Compile Include="Tokens\v1\TokenV1.cs" />
+    <Compile Include="Tokens\v1\TokenGeneratorV1.cs" />
+    <Compile Include="Tokens\v1\TokenRequestParametersV1.cs" />
     <Compile Include="WebRequests\ContentFactory.cs" />
     <Compile Include="WebRequests\HeaderFactory.cs" />
     <Compile Include="WebRequests\HttpsClientFactory.cs" />

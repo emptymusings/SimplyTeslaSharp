@@ -31,11 +31,11 @@ namespace SimplTeslaMaster
         }
 
 
-        private static Token token;
+        private static TokenV1 token;
         /// <summary>
         /// Gets or Sets authoriztion token for Tesla's servers
         /// </summary>
-        internal static Token Token
+        internal static TokenV1 Token
         {
             get
             {
@@ -67,7 +67,7 @@ namespace SimplTeslaMaster
         /// </summary>
         private static void GetToken()
         {
-            token = TokenGenerator.GetToken();
+            token = TokenGeneratorV1.GetToken();
         }
     }
 }

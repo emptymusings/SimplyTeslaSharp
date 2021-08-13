@@ -14,17 +14,17 @@ namespace SimplTeslaMaster.Tokens
     /// <summary>
     /// Static class used for auth token generation
     /// </summary>
-    internal static class TokenGenerator
+    internal static class TokenGeneratorV1
     {
         /// <summary>
         /// Requests an authorization token from the Tesla servers
         /// </summary>
-        public static Token GetToken()
+        public static TokenV1 GetToken()
         {
             HttpsClient client;
             HttpsClientRequest request;
             HttpsClientResponse response = null;
-            Token result = null;
+            TokenV1 result = null;
 
             client = HttpsClientFactory.NewClient();
 
@@ -41,11 +41,11 @@ namespace SimplTeslaMaster.Tokens
                 response = client.Dispatch(request);
 
                 // Convert the JSON to a token object
-                result = (Token)JsonConvert.DeserializeObject(response.ContentString, typeof(Token));
+                result = (TokenV1)JsonConvert.DeserializeObject(response.ContentString, typeof(TokenV1));
             }
             catch (Exception ex)
             {
-                CrestronConsole.PrintLine("SimplTeslaMaster.Tokens.TokenGenerator.GetToken()::Error in Tesla API (TokenGenerator.GetToken): Unable to get response. " + ex.ToString());
+                CrestronConsole.PrintLine("SimplTeslaMaster.TokensV1.TokenGenerator.GetToken()::Error in Tesla API (TokenGenerator.GetToken): Unable to get response. " + ex.ToString());
                 ErrorLog.Exception("Error in Tesla API (TokenGenerator.GetToken): Unable to get response.", ex);
             }
 

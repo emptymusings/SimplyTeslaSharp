@@ -81,7 +81,7 @@ namespace SimplTeslaMaster
         {
             try
             {
-                Tokens.Token token = Tokens.TokenGenerator.GetToken();
+                Tokens.TokenV1 token = Tokens.TokenGeneratorV1.GetToken();
                 Settings.Token = token;
             }
             catch (Exception ex)

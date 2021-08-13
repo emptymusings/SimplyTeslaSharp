@@ -40,7 +40,7 @@ namespace SimplTeslaMaster.WebRequests
         private static string GetNewTokenFormContent()
         {
             StringBuilder contentBuilder = new StringBuilder();
-            TokenRequestParameters parameters = new TokenRequestParameters();
+            TokenRequestParametersV1 parameters = new TokenRequestParametersV1();
 
             try
             {
@@ -69,7 +69,7 @@ namespace SimplTeslaMaster.WebRequests
         private static string GetRefreshTokenFormContent()
         {
             StringBuilder contentBuilder = new StringBuilder();
-            TokenRequestParameters parameters = new TokenRequestParameters();
+            TokenRequestParametersV1 parameters = new TokenRequestParametersV1();
 
             contentBuilder.AppendLine();
 
