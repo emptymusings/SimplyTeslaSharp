@@ -1,5 +1,8 @@
-# SimplyTeslaSharp
-Simpl# libraries used in order to connect the Crestron Series 3 home automation system to a Tesla Vehicle
+# SimplyTeslaSharp (Deprecated)
+Simpl# libraries used to connect the Crestron Series 3 home automation system to a Tesla Vehicle.
+
+## Deprecation Notes:
+Due to the Crestron Series 3 no longer being supported, changes in the method of authentication for Tesla's APIs, and the lack of support in Simpl# for SHA-256 encryption, this project is no longer active.  I am leaving it here for historic purposes.
 
 ## Requirements:
 * Crestron Simpl Windows application
