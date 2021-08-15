@@ -1,4 +1,4 @@
-# SimplyTeslaSharp (Deprecated)
+# :ghost: DEPRECATED - SimplyTeslaSharp 
 Simpl# libraries used to connect the Crestron Series 3 home automation system to a Tesla Vehicle.
 
 ## Deprecation Notes:
